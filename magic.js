@@ -11,7 +11,7 @@ Rune.prototype = {
 };
 
 function max_component_complexity(components) {
-    return components.map(function(c) {return c.complexity;}).reduce(Math.max);
+    return _.pluck(components, 'complexity').reduce(Math.max);
 }
 
 function Spell(components) {
