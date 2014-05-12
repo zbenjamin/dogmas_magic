@@ -77,10 +77,63 @@ Spell.prototype = {
     }    
 };
 
+function parse_top(str) {
+    var pos = 0;
+    var ret;
+
+    while (pos < str.length) {
+        var c = str[pos];
+        if (c == ' ' || c == '\n' || c == '\t') {
+            pos++;
+        } else if (c == '(') {
+            ret = parse_spell(str, pos);
+            pos += ret.consumed;
+         } else {
+             throw new Error("Malformed spell description");
+        }
+    }
+    return ret.tree;
+}
+
+function parse_spell(str, start) {
+    if (str[start] != '(') {
+        throw new Error("Not a spell description");
+    }
+    var pos = start + 1;
+    var ret;
+    var components = []
+
+    while (pos < str.length) {
+        var c = str[pos];
+        if (c == ' ' || c == '\n' || c == '\t') {
+            pos++;
+        } else if (c == '/') {
+            pos++;
+        } else if (/\w/.test(c)) {
+            var regex = /\w+/;
+            regex.lastIndex = pos;
+            var rune_name = regex.exec(str)[0];
+            components.push(new Rune(rune_name))
+            pos += rune_name.length
+        } else if (c == '(') {
+            ret = parse_spell(str, pos);
+            components.push(ret.tree);
+            pos += ret.consumed;
+        } else if (c == ')') {
+            pos++;
+            break;
+        } else {
+            throw new Error("Bad character in spell description");
+        }
+    }
+
+    return {consumed: pos - start,
+            tree: new Spell(components)};
+}
+
 $(function() {
     var c = $("#spell_canvas")[0];
     var ctx = c.getContext("2d");
-    var s = new Spell([new Rune("foo"), new Rune("bar")]);
-    // var s = new Spell([new Rune("foo")]);
+    var s = parse_top("((foo/baz)/(bar))");
     s.draw(ctx, 500, 500);
 });
