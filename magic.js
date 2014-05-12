@@ -132,8 +132,16 @@ function parse_spell(str, start) {
 }
 
 $(function() {
-    var c = $("#spell_canvas")[0];
-    var ctx = c.getContext("2d");
-    var s = parse_top("((foo/baz)/(bar))");
-    s.draw(ctx, 500, 500);
+    var canvas = $("#spell_canvas")[0];
+    var ctx = canvas.getContext("2d");
+
+    $("form").submit(function (e) {
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var txt = $("#spell_desc").val();
+        var spell = parse_top(txt);
+        spell.draw(ctx, canvas.width, canvas.height);
+        ctx.restore();
+        e.preventDefault();
+    });
 });
