@@ -88,6 +88,35 @@ Spell.prototype.compute_layout = function spell_compute_layout(width, height) {
     return {dividers: dividers, regions: regions};
 }
 
+function Unit(components) {
+    CompoundComponent.call(this, components)
+}
+
+Unit.prototype = Object.create(CompoundComponent.prototype);
+Unit.prototype.constructor = Unit;
+
+Unit.prototype.draw_border = function unit_draw_border(ctx, width, height) {
+    ctx.beginPath();
+    ctx.rect(0, 0, width, height);
+    ctx.stroke();
+}
+
+Unit.prototype.compute_layout = function unit_compute_layout(width, height) {
+    var dividers = [];
+    var regions = [];
+
+    if (this.components.length == 1) {
+        regions.push({x: width * 0.1, y: height * 0.1, width: width * 0.8});
+    } else if (this.components.length == 2) {
+        dividers.push({p1: {x: 0, y: height}, p2: {x: width, y: 0}});
+
+        regions.push({x: width / 2 * 0.1, y: height / 2 * 0.1, width: width / 2 * 0.8});
+        regions.push({x: width / 2 * 1.1, y: height / 2 * 1.1, width: width / 2 * 0.8});
+    }
+
+    return {dividers: dividers, regions: regions};
+}
+
 function parse_top(str) {
     var pos = 0;
     var ret;
@@ -136,6 +165,10 @@ function parse_spell(str, start) {
         } else if (c == ')') {
             pos++;
             break;
+        } else if (c == '[') {
+            ret = parse_unit(str, pos);
+            components.push(ret.tree);
+            pos += ret.consumed;
         } else {
             throw new Error("Bad character in spell description");
         }
@@ -143,6 +176,42 @@ function parse_spell(str, start) {
 
     return {consumed: pos - start,
             tree: new Spell(components)};
+}
+
+function parse_unit(str, start) {
+    if (str[start] != '[') {
+        throw new Error("Not a unit");
+    }
+    var pos = start + 1;
+    var ret;
+    var components = [];
+
+    while (pos < str.length) {
+        var c = str[pos];
+        if (c == ' ' || c == '\n' || c == '\t') {
+            pos++;
+        } else if (c == '/') {
+            pos++;
+        } else if (/\w/.test(c)) {
+            var regex = /\w+/g;
+            regex.lastIndex = pos;
+            var rune_name = regex.exec(str)[0];
+            components.push(new Rune(rune_name))
+            pos += rune_name.length
+        } else if (c == '[') {
+            ret = parse_unit(str, pos);
+            components.push(ret.tree);
+            pos += ret.consumed;
+        } else if (c == ']') {
+            pos++;
+            break;
+        } else {
+            throw new Error("Bad character in unit");
+        }
+    }
+
+    return {consumed: pos - start,
+            tree: new Unit(components)};
 }
 
 $(function() {
