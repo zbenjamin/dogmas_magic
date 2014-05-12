@@ -124,7 +124,7 @@ function parse_spell(str, start) {
         } else if (c == '/') {
             pos++;
         } else if (/\w/.test(c)) {
-            var regex = /\w+/;
+            var regex = /\w+/g;
             regex.lastIndex = pos;
             var rune_name = regex.exec(str)[0];
             components.push(new Rune(rune_name))
