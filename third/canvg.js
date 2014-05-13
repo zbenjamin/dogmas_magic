@@ -5,68 +5,11 @@
  * http://code.google.com/p/canvg/
  *
  * Requires: rgbcolor.js - http://www.phpied.com/rgb-color-parser-in-javascript/
+ *
+ * This copy of canvg has been modified to expose the underlying svg object.
  */
-(function(){
-	// canvg(target, s)
-	// empty parameters: replace all 'svg' elements on page with 'canvas' elements
-	// target: canvas element or the id of a canvas element
-	// s: svg string, url to svg file, or xml document
-	// opts: optional hash of options
-	//		 ignoreMouse: true => ignore mouse events
-	//		 ignoreAnimation: true => ignore animations
-	//		 ignoreDimensions: true => does not try to resize canvas
-	//		 ignoreClear: true => does not clear canvas
-	//		 offsetX: int => draws at a x offset
-	//		 offsetY: int => draws at a y offset
-	//		 scaleWidth: int => scales horizontally to width
-	//		 scaleHeight: int => scales vertically to height
-	//		 renderCallback: function => will call the function after the first render is completed
-	//		 forceRedraw: function => will call the function on every frame, if it returns true, will redraw
-	this.canvg = function (target, s, opts) {
-		// no parameters
-		if (target == null && s == null && opts == null) {
-			var svgTags = document.getElementsByTagName('svg');
-			for (var i=0; i<svgTags.length; i++) {
-				var svgTag = svgTags[i];
-				var c = document.createElement('canvas');
-				c.width = svgTag.clientWidth;
-				c.height = svgTag.clientHeight;
-				svgTag.parentNode.insertBefore(c, svgTag);
-				svgTag.parentNode.removeChild(svgTag);
-				var div = document.createElement('div');
-				div.appendChild(svgTag);
-				canvg(c, div.innerHTML);
-			}
-			return;
-		}	
-		opts = opts || {};
-	
-		if (typeof target == 'string') {
-			target = document.getElementById(target);
-		}
-		
-		// store class on canvas
-		if (target.svg != null) target.svg.stop();
-		var svg = build();
-		// on i.e. 8 for flash canvas, we can't assign the property so check for it
-		if (!(target.childNodes.length == 1 && target.childNodes[0].nodeName == 'OBJECT')) target.svg = svg;
-		svg.opts = opts;
-		
-		var ctx = target.getContext('2d');
-		if (typeof(s.documentElement) != 'undefined') {
-			// load from xml doc
-			svg.loadXmlDoc(ctx, s);
-		}
-		else if (s.substr(0,1) == '<') {
-			// load from xml string
-			svg.loadXml(ctx, s);
-		}
-		else {
-			// load from url
-			svg.load(ctx, s);
-		}
-	}
 
+var canvg = (function(){
 	function build() {
 		var svg = { };
 		
@@ -2823,19 +2766,5 @@
 		
 		return svg;
 	}
+    return build();
 })();
-
-if (typeof(CanvasRenderingContext2D) != 'undefined') {
-	CanvasRenderingContext2D.prototype.drawSvg = function(s, dx, dy, dw, dh) {
-		canvg(this.canvas, s, { 
-			ignoreMouse: true, 
-			ignoreAnimation: true, 
-			ignoreDimensions: true, 
-			ignoreClear: true, 
-			offsetX: dx, 
-			offsetY: dy, 
-			scaleWidth: dw, 
-			scaleHeight: dh
-		});
-	}
-}
