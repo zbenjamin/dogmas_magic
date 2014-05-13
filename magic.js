@@ -92,6 +92,8 @@ Spell.prototype.compute_layout = function spell_compute_layout(width, height) {
         regions.push({x:      max_width * 0.1,
                       y:      max_width * 0.1,
                       width:  max_width * 0.8});
+    } else {
+        throw new Error("Spells currently only support up to 2 components");
     }
 
     return {dividers: dividers, regions: regions};
@@ -121,6 +123,8 @@ Unit.prototype.compute_layout = function unit_compute_layout(width, height) {
 
         regions.push({x: width / 2 * 0.1, y: height / 2 * 0.1, width: width / 2 * 0.8});
         regions.push({x: width / 2 * 1.1, y: height / 2 * 1.1, width: width / 2 * 0.8});
+    } else {
+        throw new Error("Units currently only support up to 2 components");
     }
 
     return {dividers: dividers, regions: regions};
