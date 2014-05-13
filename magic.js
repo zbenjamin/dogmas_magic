@@ -136,7 +136,7 @@ function parse_magic(str) {
 
     while (pos < str.length) {
         var c = str[pos];
-        if (c == ' ' || c == '\n' || c == '\t') {
+        if (_.contains(' \n\t', c)) {
             pos++;
         } else if (c == '(') {
             ret = parse_spell(str, pos);
@@ -162,9 +162,7 @@ function make_compound_component_parser(component_name, constructor, start_delim
 
         while (pos < str.length) {
             var c = str[pos];
-            if (c == ' ' || c == '\n' || c == '\t') {
-                pos++;
-            } else if (c == '/') {
+            if (_.contains(' \n\t/', c)) {
                 pos++;
             } else if (/\w/.test(c)) {
                 var regex = /\w+/g;
