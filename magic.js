@@ -130,7 +130,7 @@ Unit.prototype.compute_layout = function unit_compute_layout(width, height) {
     return {dividers: dividers, regions: regions};
 }
 
-function parse_top(str) {
+function parse_magic(str) {
     var pos = 0;
     var ret;
 
@@ -151,81 +151,51 @@ function parse_top(str) {
     return ret.tree;
 }
 
-function parse_spell(str, start) {
-    if (str[start] != '(') {
-        throw new Error("Not a spell description");
-    }
-    var pos = start + 1;
-    var ret;
-    var components = []
-
-    while (pos < str.length) {
-        var c = str[pos];
-        if (c == ' ' || c == '\n' || c == '\t') {
-            pos++;
-        } else if (c == '/') {
-            pos++;
-        } else if (/\w/.test(c)) {
-            var regex = /\w+/g;
-            regex.lastIndex = pos;
-            var rune_name = regex.exec(str)[0];
-            components.push(new Rune(rune_name))
-            pos += rune_name.length
-        } else if (c == '(') {
-            ret = parse_spell(str, pos);
-            components.push(ret.tree);
-            pos += ret.consumed;
-        } else if (c == ')') {
-            pos++;
-            break;
-        } else if (c == '[') {
-            ret = parse_unit(str, pos);
-            components.push(ret.tree);
-            pos += ret.consumed;
-        } else {
-            throw new Error("Bad character in spell description");
+function make_compound_component_parser(component_name, constructor, start_delim, end_delim) {
+    function parse_component(str, start) {
+        if (str[start] != start_delim) {
+            throw new Error("Not a " + component_name);
         }
-    }
+        var pos = start + 1;
+        var ret;
+        var components = []
 
-    return {consumed: pos - start,
-            tree: new Spell(components)};
+        while (pos < str.length) {
+            var c = str[pos];
+            if (c == ' ' || c == '\n' || c == '\t') {
+                pos++;
+            } else if (c == '/') {
+                pos++;
+            } else if (/\w/.test(c)) {
+                var regex = /\w+/g;
+                regex.lastIndex = pos;
+                var rune_name = regex.exec(str)[0];
+                components.push(new Rune(rune_name))
+                pos += rune_name.length
+            } else if (c == '(') {
+                ret = parse_spell(str, pos);
+                components.push(ret.tree);
+                pos += ret.consumed;
+            } else if (c == end_delim) {
+                pos++;
+                break;
+            } else if (c == '[') {
+                ret = parse_unit(str, pos);
+                components.push(ret.tree);
+                pos += ret.consumed;
+            } else {
+                throw new Error("Bad character in " + component_name);
+            }
+        }
+
+        return {consumed: pos - start,
+                tree: new constructor(components)};
+    }
+    return parse_component;
 }
 
-function parse_unit(str, start) {
-    if (str[start] != '[') {
-        throw new Error("Not a unit");
-    }
-    var pos = start + 1;
-    var ret;
-    var components = [];
-
-    while (pos < str.length) {
-        var c = str[pos];
-        if (c == ' ' || c == '\n' || c == '\t') {
-            pos++;
-        } else if (c == '/') {
-            pos++;
-        } else if (/\w/.test(c)) {
-            var regex = /\w+/g;
-            regex.lastIndex = pos;
-            var rune_name = regex.exec(str)[0];
-            components.push(new Rune(rune_name))
-            pos += rune_name.length
-        } else if (c == '[') {
-            ret = parse_unit(str, pos);
-            components.push(ret.tree);
-            pos += ret.consumed;
-        } else if (c == ']') {
-            pos++;
-            break;
-        } else {
-            throw new Error("Bad character in unit");
-        }
-    }
-
-    return {consumed: pos - start,
-            tree: new Unit(components)};
-}
+var parse_spell = make_compound_component_parser("spell", Spell, '(', ')');
+var parse_unit = make_compound_component_parser("unit", Unit, '[', ']');
 
 var svg_cache = {};
 function get_svg(url) {
@@ -274,7 +244,7 @@ $(function() {
 
             var txt = $("#spell_desc").val();
             var spell;
-            spell = parse_top(txt);
+            spell = parse_magic(txt);
 
             $("#error_msg").text('');
             spell.draw(ctx, canvas.width, canvas.height);
