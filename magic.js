@@ -174,13 +174,16 @@ function make_compound_component_parser(component_name, constructor, start_delim
                 ret = parse_spell(str, pos);
                 components.push(ret.tree);
                 pos += ret.consumed;
-            } else if (c == end_delim) {
-                pos++;
-                break;
             } else if (c == '[') {
                 ret = parse_unit(str, pos);
                 components.push(ret.tree);
                 pos += ret.consumed;
+            } else if (_.contains(')]}>', c)) {
+                if (c !== end_delim) {
+                    throw new Error("Bad closing delimeter for " + component_name);
+                }
+                pos++;
+                break;
             } else {
                 throw new Error("Bad character in " + component_name);
             }
