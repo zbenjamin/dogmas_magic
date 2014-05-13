@@ -5,7 +5,11 @@ function Rune(name) {
 }
 
 Rune.prototype.draw = function rune_draw(ctx, width, height) {
-    ctx.fillRect(0, 0, width, height);
+    var filename = "runes/" + this.name + ".svg";
+    var svg = get_svg(filename);
+    canvg.ViewPort.Clear();
+    canvg.ViewPort.SetCurrent(width, height);
+    svg.render(ctx);
 }
 
 function max_component_complexity(components) {
@@ -214,9 +218,27 @@ function parse_unit(str, start) {
             tree: new Unit(components)};
 }
 
+var svg_cache = {};
+function get_svg(url) {
+    if (! svg_cache.hasOwnProperty(url)) {
+        var xml = canvg.parseXml(canvg.ajax(url));
+        var elem = canvg.CreateElement(xml.documentElement);
+        elem.root = true;
+
+        var width = elem.attribute('width').toPixels('x');
+        var height = elem.attribute('height').toPixels('y');
+        elem.attribute('viewBox', true).value = '0 0 ' + width + ' ' + height;
+
+        svg_cache[url] = elem;
+    }
+
+    return svg_cache[url];
+}
+
 $(function() {
     var canvas = $("#spell_canvas")[0];
     var ctx = canvas.getContext("2d");
+    canvg.init(ctx);
 
     $("form").submit(function (e) {
         e.preventDefault();
