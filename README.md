@@ -4,10 +4,11 @@ A web-app for rendering spell diagrams.
 
 Usage
 =====
-You will want to spin up a small web server using something like:
+1. Clone the repo
+2. Spin up a small web server using something like `python -m SimpleHTTPServer`
+3. Browse to `http://localhost:8000/magic.html`
 
-~~~
-python -m SimpleHTTPServer
-~~~
-
-and then browse to `http://localhost:8000/magic.html`
+Some spells to try:
+* (fire)
+* (fire/water)
+* ((fire)/[[water/air]/earth])
