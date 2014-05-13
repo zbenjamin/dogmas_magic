@@ -178,6 +178,10 @@ function make_compound_component_parser(component_name, constructor, start_delim
                 ret = parse_unit(str, pos);
                 components.push(ret.tree);
                 pos += ret.consumed;
+            } else if (c == '<') {
+                throw new Error("Targets, durations, and restrictions are not yet supported");
+            } else if (c == '{') {
+                throw new Error("Definitions are not yet supported");
             } else if (_.contains(')]}>', c)) {
                 if (c !== end_delim) {
                     throw new Error("Bad closing delimeter for " + component_name);
