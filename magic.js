@@ -6,7 +6,12 @@ function Rune(name) {
 
 Rune.prototype.draw = function rune_draw(ctx, width, height) {
     var filename = "runes/" + this.name + ".svg";
-    var svg = get_svg(filename);
+    var svg;
+    try {
+        svg = get_svg(filename);
+    } catch (e) {
+        throw new Error("Cannot get SVG data for rune: " + this.name + ": " + e.message);
+    }
     canvg.ViewPort.Clear();
     canvg.ViewPort.SetCurrent(width, height);
     svg.render(ctx);
@@ -221,8 +226,25 @@ function parse_unit(str, start) {
 var svg_cache = {};
 function get_svg(url) {
     if (! svg_cache.hasOwnProperty(url)) {
-        var xml = canvg.parseXml(canvg.ajax(url));
-        var elem = canvg.CreateElement(xml.documentElement);
+        var xml;
+        var error_status;
+        $.ajax({url: url,
+                async: false,
+                isLocal: true,
+                success: function (data, result, xhr) {
+                    xml = xhr.responseText;
+                },
+                error: function (xhr) {
+                    // We can't throw an error from here.  See
+                    // http://bugs.jquery.com/ticket/7201
+                    error_status = xhr.status;
+                }
+               });
+        if (error_status !== undefined) {
+            throw new Error("GET failed with error code " + error_status);
+        }
+        var svg = canvg.parseXml(xml);
+        var elem = canvg.CreateElement(svg.documentElement);
         elem.root = true;
 
         var width = elem.attribute('width').toPixels('x');
@@ -248,15 +270,12 @@ $(function() {
 
             var txt = $("#spell_desc").val();
             var spell;
-            try {
-                spell = parse_top(txt);
-            } catch (e) {
-                $("#error_msg").text(e.message);
-                return;
-            }
+            spell = parse_top(txt);
 
             $("#error_msg").text('');
             spell.draw(ctx, canvas.width, canvas.height);
+        } catch (e) {
+            $("#error_msg").text(e.message);
         } finally {
             ctx.restore();
         }
