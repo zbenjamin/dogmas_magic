@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="34.672516"
+   height="51.808056"
+   id="svg7509"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="fire.svg">
+  <defs
+     id="defs7511" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.3150307"
+     inkscape:cx="-20.321444"
+     inkscape:cy="-26.606932"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1366"
+     inkscape:window-height="716"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata7514">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-355.125,-504.03125)">
+    <path
+       style="fill:none;stroke:#ed1c24;stroke-width:3;stroke-miterlimit:10"
+       inkscape:connector-curvature="0"
+       stroke-miterlimit="10"
+       d="m 363.85101,546.86537 c 5.841,12.16 16.735,7.012 20.884,1.89 5.497,-6.785 4.146,-17.031 -0.989,-24.594 -4.755,-7.003 -13.514,-10.539 -19.729,-13.784 4.865,4.594 9.805,10.295 11.622,12.703 5.405,7.164 6.251,17.166 -0.638,16.757 -9.092,-0.541 -8.206,-12.556 -7.741,-16.487 0,0 -9.71,10.397 -3.409,23.515 z"
+       id="path37" />
+  </g>
+</svg>
